@@ -5,12 +5,12 @@ from text import Font
 
 class Title:
     def __init__(self, screen):
-        self.title_1 = SysFont("I Wanna Defeat", 'Georgia', 80, (255, 255, 255), [0, 0])
-        self.title_2 = SysFont("The Microchip", 'Georgia', 75, (255, 255, 255), [0, 0])
-        self.press_enter = Font('Press "Enter"', 'CampanaScript.otf', 70, (255, 255, 255), [0, 0], 1)
+        self.title_1 = SysFont("I Wanna Defeat", 'Georgia', int(screen.get_height() * (80/700)), (255, 255, 255), [0, 0])
+        self.title_2 = SysFont("The Microchip", 'Georgia', int(screen.get_height() * (75/700)), (255, 255, 255), [0, 0])
+        self.press_enter = Font('Press "Enter"', 'CampanaScript.otf', int(screen.get_height() * (70/700)), (255, 255, 255), [0, 0], 1)
 
-        self.gap_1 = 80 - self.title_1.height()
-        self.gap_2 = 170 - 80 - self.title_2.height()
+        self.gap_1 = screen.get_height() * (80/700) - self.title_1.height()
+        self.gap_2 = screen.get_height() * (90/700) - self.title_2.height()
 
         self.title_1.position = [
             (screen.get_width() - self.title_1.width()) / 2,
