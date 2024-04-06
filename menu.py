@@ -44,6 +44,8 @@ class Menu:
         self.texts = [self.title_1, self.title_2, self.play, self.controls, self.arrows]
         self.options = 0
         self.title = None
+        self.gameplay = None
+        self.control = None
 
     def update(self, events):
         for event in events:
@@ -54,6 +56,12 @@ class Menu:
                     self.options += 1
                 if event.key == pygame.K_DOWN:
                     self.options -= 1
+                if event.key == pygame.K_RETURN:
+                    if self.options % 2:
+                        return self.control
+                    else:
+                        return self.gameplay
+
         return self
 
     def draw(self, screen):

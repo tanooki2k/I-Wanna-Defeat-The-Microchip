@@ -1,4 +1,5 @@
 import pygame
+import settings
 
 
 class Text:
@@ -30,7 +31,8 @@ class Text:
         self.animate = self.define_animation[str(animate)]
         self.blit = True
         self.counter = 0
-        self.timer = 5
+        # self.timer = 5
+        self.timer = 0.5 * settings.fps
 
     def __getitem__(self, item):
         return self.position[self.index[item]]

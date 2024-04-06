@@ -1,4 +1,5 @@
 import pygame
+import settings
 
 
 class Game:
@@ -16,7 +17,7 @@ class Game:
         clock = pygame.time.Clock()
 
         while not game_over:
-            clock.tick(10)
+            clock.tick(settings.fps)
             events = pygame.event.get()
             for event in events:
                 if event.type == pygame.QUIT:
