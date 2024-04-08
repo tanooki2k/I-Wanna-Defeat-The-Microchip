@@ -1,12 +1,16 @@
 import pygame
 import settings
 from pygame.locals import *
+from enum import Enum
 
-NO_JUMP = 0
-JUMP_PRESSED = 1
-JUMP_RELEASED = 2
-DOUBLE_JUMP_PRESSED = 3
-DOUBLE_JUMP_RELEASED = 4
+
+class JumpStates(Enum):
+    NO_JUMP = 0
+    JUMP_PRESSED = 1
+    JUMP_RELEASED = 2
+    DOUBLE_JUMP_PRESSED = 3
+    DOUBLE_JUMP_RELEASED = 4
+
 
 class Player:
     def __init__(self, x, y):
@@ -16,7 +20,7 @@ class Player:
         self.jump_speed = 0
         self.is_jump = False
         self.is_double_jump = False
-        self.double_jump_ready = NO_JUMP
+        self.double_jump_ready = JumpStates.NO_JUMP
 
     def width(self):
         return self.width
@@ -40,29 +44,30 @@ class Player:
         self.process_jump_ready(keys)
 
     def can_double_jump(self):
-        return not self.is_double_jump and self.double_jump_ready == JUMP_RELEASED
+        return not self.is_double_jump and self.double_jump_ready == JumpStates.JUMP_RELEASED
 
     def do_jump(self):
         self.jump_speed = 12
         self.is_jump = True
-        self.double_jump_ready = JUMP_PRESSED
+        self.double_jump_ready = JumpStates.JUMP_PRESSED
 
     def do_double_jump(self):
         self.jump_speed = 12
         self.is_double_jump = True
-        self.double_jump_ready = DOUBLE_JUMP_PRESSED
+        self.double_jump_ready = JumpStates.DOUBLE_JUMP_PRESSED
 
     def process_jump_ready(self, keys):
         if not keys[K_UP]:
-            if self.double_jump_ready == JUMP_PRESSED:
-                self.double_jump_ready = JUMP_RELEASED
-            if self.double_jump_ready == DOUBLE_JUMP_PRESSED:
-                self.double_jump_ready = DOUBLE_JUMP_RELEASED
+            if self.double_jump_ready == JumpStates.JUMP_PRESSED:
+                self.double_jump_ready = JumpStates.JUMP_RELEASED
+            if self.double_jump_ready == JumpStates.DOUBLE_JUMP_PRESSED:
+                self.double_jump_ready = JumpStates.DOUBLE_JUMP_RELEASED
 
     def draw(self, screen):
         if self.is_jump:
             reduce_jump = 1
-            if self.jump_speed > 0 and (self.double_jump_ready == JUMP_RELEASED or self.double_jump_ready == DOUBLE_JUMP_RELEASED):
+            if self.jump_speed > 0 and (
+                    self.double_jump_ready == JumpStates.JUMP_RELEASED or self.double_jump_ready == JumpStates.DOUBLE_JUMP_RELEASED):
                 reduce_jump = 0.5
             self.y -= self.jump_speed * reduce_jump
             self.jump_speed -= settings.gravity
