@@ -18,7 +18,7 @@ class Gameplay:
         self.menu = None
 
     def update(self, events):
-        self.player.update(self.player)
+        self.player.update()
 
         for event in events:
             if event.type == pygame.KEYDOWN:
