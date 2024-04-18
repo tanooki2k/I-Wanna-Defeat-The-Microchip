@@ -18,6 +18,11 @@ class Shoot(Enum):
     SHOT = 1
 
 
+class Dash(Enum):
+    NO_DASH = 0
+    DASH = 1
+
+
 class Player:
     def __init__(self, x, y):
         self.width, self.height = 50, 50
@@ -32,6 +37,9 @@ class Player:
         self.bullets = []
         self.shoot = Shoot.NO_SHOOT
         self.destroyed_bullets = []
+
+        self.dash = Dash.NO_DASH
+        self.distance_dash = 10
 
     def width(self):
         return self.width
@@ -59,6 +67,9 @@ class Player:
             self.create_a_bullet()
             self.shoot = Shoot.SHOT
         self.process_shoot_ready(keys)
+
+        if keys[K_d] and (self.dash == Dash.NO_DASH):
+            self.x += self.distance_dash * self.direction
 
     def process_shoot_ready(self, keys):
         if not keys[K_s]:
