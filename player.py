@@ -102,13 +102,17 @@ class Player:
 
         # Draw the player
         if self.is_jump:
-            reduce_jump = 1
-            if self.jump_speed > 0 and (
-                    self.double_jump_ready == JumpStates.JUMP_RELEASED or self.double_jump_ready == JumpStates.DOUBLE_JUMP_RELEASED):
-                reduce_jump = 0.5
+            reduce_jump = self.height_of_jump()
             self.y -= self.jump_speed * reduce_jump
             self.jump_speed -= settings.gravity
             if self.y >= self.initial_y:
                 self.is_jump, self.is_double_jump = False, False
                 self.y, self.double_jump_ready = self.initial_y, 0
         pygame.draw.rect(screen, (255, 0, 0), [self.x, self.y, self.width, self.height])
+
+    def height_of_jump(self):
+        reduce_jump = 1
+        if self.jump_speed > 0 and (
+                self.double_jump_ready == JumpStates.JUMP_RELEASED or self.double_jump_ready == JumpStates.DOUBLE_JUMP_RELEASED):
+            reduce_jump = 0.5
+        return reduce_jump
