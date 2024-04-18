@@ -2,6 +2,7 @@ import pygame
 import settings
 from pygame.locals import *
 from enum import Enum
+from bullet import Bullet
 
 
 class JumpStates(Enum):
@@ -10,6 +11,11 @@ class JumpStates(Enum):
     JUMP_RELEASED = 2
     DOUBLE_JUMP_PRESSED = 3
     DOUBLE_JUMP_RELEASED = 4
+
+
+class Shoot(Enum):
+    NO_SHOOT = 0
+    SHOT = 1
 
 
 class Player:
@@ -21,6 +27,11 @@ class Player:
         self.is_jump = False
         self.is_double_jump = False
         self.double_jump_ready = JumpStates.NO_JUMP
+        self.direction = 1
+
+        self.bullets = []
+        self.shoot = Shoot.NO_SHOOT
+        self.destroyed_bullets = []
 
     def width(self):
         return self.width
@@ -32,16 +43,31 @@ class Player:
         keys = pygame.key.get_pressed()
         if keys[K_RIGHT] and (self.x < settings.screen_width - self.width / 2):
             self.x += 4
+            self.direction = 1
         if keys[K_LEFT] and (self.x > -self.width / 2):
             self.x -= 4
+            self.direction = -1
 
         if keys[K_UP]:
             if not self.is_jump:
                 self.do_jump()
             elif self.can_double_jump():
                 self.do_double_jump()
-
         self.process_jump_ready(keys)
+
+        if keys[K_s] and (self.shoot == Shoot.NO_SHOOT):
+            self.create_a_bullet()
+            self.shoot = Shoot.SHOT
+        self.process_shoot_ready(keys)
+
+    def process_shoot_ready(self, keys):
+        if not keys[K_s]:
+            if self.shoot == Shoot.SHOT:
+                self.shoot = Shoot.NO_SHOOT
+
+    def create_a_bullet(self):
+        initial_x = self.x if self.direction == -1 else self.x + self.width
+        self.bullets.append(Bullet(initial_x, self.y + self.height / 2, self.direction))
 
     def can_double_jump(self):
         return not self.is_double_jump and self.double_jump_ready == JumpStates.JUMP_RELEASED
@@ -64,6 +90,17 @@ class Player:
                 self.double_jump_ready = JumpStates.DOUBLE_JUMP_RELEASED
 
     def draw(self, screen):
+        # Draw the bullets
+        self.destroyed_bullets = []
+        for bullet in self.bullets:
+            bullet.draw(screen)
+            if bullet.destroyed(screen):
+                self.destroyed_bullets.append(bullet)
+
+        for bullet_destroyed in self.destroyed_bullets:
+            self.bullets.remove(bullet_destroyed)
+
+        # Draw the player
         if self.is_jump:
             reduce_jump = 1
             if self.jump_speed > 0 and (
