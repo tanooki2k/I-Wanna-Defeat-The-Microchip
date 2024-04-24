@@ -42,7 +42,7 @@ class Player:
         self.destroyed_bullets = []
 
         self.dash = Dash.NO_DASH
-        self.speed_dash = player_settings.speed_dash
+        self.speed_dash = player_settings.initial_speed_dash
         self.dash_time = 0
 
     def width(self):
@@ -76,11 +76,13 @@ class Player:
             if keys[K_d] and (self.dash == Dash.NO_DASH):
                 self.dash = Dash.NO_MOVE
                 self.jump_speed = 0
+                self.speed_dash = player_settings.initial_speed_dash
                 self.dash_time = 0
 
         if self.dash == Dash.NO_MOVE:
             self.dash_time += 1
             self.x += self.speed_dash * self.direction
+            self.speed_dash += player_settings.acceleration_dash
             if self.dash_time == player_settings.dash_timer:
                 self.dash = Dash.DASH
 
