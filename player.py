@@ -52,9 +52,14 @@ class Player:
         if keys[K_RIGHT] and (self.x < settings.screen_width - self.width / 2):
             self.x += 4
             self.direction = 1
+        if not self.x < settings.screen_width - self.width / 2:
+            self.x = settings.screen_width - self.width / 2
+
         if keys[K_LEFT] and (self.x > -self.width / 2):
             self.x -= 4
             self.direction = -1
+        if not self.x > -self.width / 2:
+            self.x = -self.width / 2
 
         if keys[K_UP]:
             if not self.is_jump:
