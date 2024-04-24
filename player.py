@@ -21,6 +21,7 @@ class Shoot(Enum):
 class Dash(Enum):
     NO_DASH = 0
     DASH = 1
+    NO_MOVE = 2
 
 
 class Player:
@@ -39,7 +40,7 @@ class Player:
         self.destroyed_bullets = []
 
         self.dash = Dash.NO_DASH
-        self.distance_dash = 10
+        self.speed_dash = 1
 
     def width(self):
         return self.width
@@ -49,32 +50,39 @@ class Player:
 
     def update(self):
         keys = pygame.key.get_pressed()
-        if keys[K_RIGHT] and (self.x < settings.screen_width - self.width / 2):
-            self.x += 4
-            self.direction = 1
-        if not self.x < settings.screen_width - self.width / 2:
-            self.x = settings.screen_width - self.width / 2
+        if self.dash == Dash.NO_DASH:
+            if keys[K_RIGHT] and (self.x < settings.screen_width - self.width / 2):
+                self.x += 4
+                self.direction = 1
+            if not self.x < settings.screen_width - self.width / 2:
+                self.x = settings.screen_width - self.width / 2
 
-        if keys[K_LEFT] and (self.x > -self.width / 2):
-            self.x -= 4
-            self.direction = -1
-        if not self.x > -self.width / 2:
-            self.x = -self.width / 2
+            if keys[K_LEFT] and (self.x > -self.width / 2):
+                self.x -= 4
+                self.direction = -1
+            if not self.x > -self.width / 2:
+                self.x = -self.width / 2
 
-        if keys[K_UP]:
-            if not self.is_jump:
-                self.do_jump()
-            elif self.can_double_jump():
-                self.do_double_jump()
-        self.process_jump_ready(keys)
+            if keys[K_UP]:
+                if not self.is_jump:
+                    self.do_jump()
+                elif self.can_double_jump():
+                    self.do_double_jump()
+            self.process_jump_ready(keys)
 
-        if keys[K_s] and (self.shoot == Shoot.NO_SHOOT):
-            self.create_a_bullet()
-            self.shoot = Shoot.SHOT
-        self.process_shoot_ready(keys)
+            if keys[K_s] and (self.shoot == Shoot.NO_SHOOT):
+                self.create_a_bullet()
+                self.shoot = Shoot.SHOT
+            self.process_shoot_ready(keys)
 
-        if keys[K_d] and (self.dash == Dash.NO_DASH):
-            self.x += self.distance_dash * self.direction
+            if keys[K_d] and (self.dash == Dash.NO_DASH):
+                self.x += self.speed_dash * self.direction
+                self.dash = Dash.NO_MOVE
+                self.jump_speed = 0
+
+        if not keys[K_d]:
+            if self.dash == Dash.NO_MOVE:
+                self.dash = Dash.NO_DASH
 
     def process_shoot_ready(self, keys):
         if not keys[K_s]:
@@ -118,9 +126,10 @@ class Player:
 
         # Draw the player
         if self.is_jump:
-            reduce_jump = self.height_of_jump()
-            self.y -= self.jump_speed * reduce_jump
-            self.jump_speed -= settings.gravity
+            if self.dash == Dash.NO_DASH:
+                reduce_jump = self.height_of_jump()
+                self.y -= self.jump_speed * reduce_jump
+                self.jump_speed -= settings.gravity
             if self.y >= self.initial_y:
                 self.is_jump, self.is_double_jump = False, False
                 self.y, self.double_jump_ready = self.initial_y, 0
