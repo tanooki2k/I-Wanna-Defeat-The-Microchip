@@ -1,4 +1,6 @@
 import pygame
+
+import player_settings
 import settings
 from pygame.locals import *
 from enum import Enum
@@ -40,7 +42,8 @@ class Player:
         self.destroyed_bullets = []
 
         self.dash = Dash.NO_DASH
-        self.speed_dash = 1
+        self.speed_dash = player_settings.speed_dash
+        self.dash_time = 0
 
     def width(self):
         return self.width
@@ -50,18 +53,13 @@ class Player:
 
     def update(self):
         keys = pygame.key.get_pressed()
-        if self.dash == Dash.NO_DASH:
-            if keys[K_RIGHT] and (self.x < settings.screen_width - self.width / 2):
-                self.x += 4
-                self.direction = 1
-            if not self.x < settings.screen_width - self.width / 2:
-                self.x = settings.screen_width - self.width / 2
-
-            if keys[K_LEFT] and (self.x > -self.width / 2):
-                self.x -= 4
-                self.direction = -1
-            if not self.x > -self.width / 2:
-                self.x = -self.width / 2
+        if self.dash != Dash.NO_MOVE:
+            if keys[K_RIGHT] or keys[K_LEFT]:
+                if keys[K_RIGHT] and (self.x < settings.screen_width - self.width / 2):
+                    self.direction = 1
+                if keys[K_LEFT] and (self.x > -self.width / 2):
+                    self.direction = -1
+                self.x += player_settings.player_speed * self.direction
 
             if keys[K_UP]:
                 if not self.is_jump:
@@ -76,13 +74,27 @@ class Player:
             self.process_shoot_ready(keys)
 
             if keys[K_d] and (self.dash == Dash.NO_DASH):
-                self.x += self.speed_dash * self.direction
                 self.dash = Dash.NO_MOVE
                 self.jump_speed = 0
+                self.dash_time = 0
+
+        if self.dash == Dash.NO_MOVE:
+            self.dash_time += 1
+            self.x += self.speed_dash * self.direction
+            if self.dash_time == player_settings.dash_timer:
+                self.dash = Dash.DASH
 
         if not keys[K_d]:
-            if self.dash == Dash.NO_MOVE:
+            if self.dash == Dash.DASH:
                 self.dash = Dash.NO_DASH
+
+        self.check_not_out_screen()
+
+    def check_not_out_screen(self):
+        if not self.x < settings.screen_width - self.width / 2:
+            self.x = settings.screen_width - self.width / 2
+        if not self.x > -self.width / 2:
+            self.x = -self.width / 2
 
     def process_shoot_ready(self, keys):
         if not keys[K_s]:
@@ -126,7 +138,7 @@ class Player:
 
         # Draw the player
         if self.is_jump:
-            if self.dash == Dash.NO_DASH:
+            if self.dash != Dash.NO_MOVE:
                 reduce_jump = self.height_of_jump()
                 self.y -= self.jump_speed * reduce_jump
                 self.jump_speed -= settings.gravity
