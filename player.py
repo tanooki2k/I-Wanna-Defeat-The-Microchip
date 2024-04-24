@@ -22,8 +22,9 @@ class Shoot(Enum):
 
 class Dash(Enum):
     NO_DASH = 0
-    DASH = 1
-    NO_MOVE = 2
+    WAITING = 1
+    IN_AIR = 2
+    NO_MOVE = 3
 
 
 class Player:
@@ -84,10 +85,17 @@ class Player:
             self.x += self.speed_dash * self.direction
             self.speed_dash += player_settings.acceleration_dash
             if self.dash_time == player_settings.dash_timer:
-                self.dash = Dash.DASH
+                if self.double_jump_ready == JumpStates.NO_JUMP:
+                    self.dash = Dash.WAITING
+                else:
+                    self.dash = Dash.IN_AIR
+                self.dash_time = 0
 
-        if not keys[K_d]:
-            if self.dash == Dash.DASH:
+        if (self.dash == Dash.WAITING) or (self.dash == Dash.IN_AIR):
+            self.dash_time += 1
+            if self.y == self.initial_y:
+                self.dash = Dash.WAITING
+            if (self.dash == Dash.WAITING) and (self.dash_time >= player_settings.dash_wait_timer) and not keys[K_d]:
                 self.dash = Dash.NO_DASH
 
         self.check_not_out_screen()
