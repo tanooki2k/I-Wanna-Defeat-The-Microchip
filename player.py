@@ -55,26 +55,21 @@ class Player:
     def update(self):
         keys = pygame.key.get_pressed()
         if self.dash != Dash.NO_MOVE:
-            if keys[K_RIGHT] or keys[K_LEFT]:
-                if keys[K_RIGHT] and (self.x < settings.screen_width - self.width / 2):
+            if keys[player_settings.right] or keys[player_settings.left]:
+                if keys[player_settings.right] and (self.x < settings.screen_width - self.width / 2):
                     self.direction = 1
-                if keys[K_LEFT] and (self.x > -self.width / 2):
+                if keys[player_settings.left] and (self.x > -self.width / 2):
                     self.direction = -1
                 self.x += player_settings.player_speed * self.direction
 
-            if keys[K_UP]:
+            if keys[player_settings.jump]:
                 if not self.is_jump:
                     self.do_jump()
                 elif self.can_double_jump():
                     self.do_double_jump()
             self.process_jump_ready(keys)
 
-            if keys[K_s] and (self.shoot == Shoot.NO_SHOOT):
-                self.create_a_bullet()
-                self.shoot = Shoot.SHOT
-            self.process_shoot_ready(keys)
-
-            if keys[K_d] and (self.dash == Dash.NO_DASH):
+            if keys[player_settings.dash] and (self.dash == Dash.NO_DASH):
                 self.dash = Dash.NO_MOVE
                 self.jump_speed = 0
                 self.speed_dash = player_settings.initial_speed_dash
@@ -91,11 +86,17 @@ class Player:
                     self.dash = Dash.IN_AIR
                 self.dash_time = 0
 
+        if keys[player_settings.shoot] and (self.shoot == Shoot.NO_SHOOT):
+            self.create_a_bullet()
+            self.shoot = Shoot.SHOT
+        self.process_shoot_ready(keys)
+
         if (self.dash == Dash.WAITING) or (self.dash == Dash.IN_AIR):
             self.dash_time += 1
             if self.y == self.initial_y:
                 self.dash = Dash.WAITING
-            if (self.dash == Dash.WAITING) and (self.dash_time >= player_settings.dash_wait_timer) and not keys[K_d]:
+            if (self.dash == Dash.WAITING) and (self.dash_time >= player_settings.dash_wait_timer) and not keys[
+                player_settings.dash]:
                 self.dash = Dash.NO_DASH
 
         self.check_not_out_screen()
@@ -107,7 +108,7 @@ class Player:
             self.x = -self.width / 2
 
     def process_shoot_ready(self, keys):
-        if not keys[K_s]:
+        if not keys[player_settings.shoot]:
             if self.shoot == Shoot.SHOT:
                 self.shoot = Shoot.NO_SHOOT
 
@@ -129,7 +130,7 @@ class Player:
         self.double_jump_ready = JumpStates.DOUBLE_JUMP_PRESSED
 
     def process_jump_ready(self, keys):
-        if not keys[K_UP]:
+        if not keys[player_settings.jump]:
             if self.double_jump_ready == JumpStates.JUMP_PRESSED:
                 self.double_jump_ready = JumpStates.JUMP_RELEASED
             if self.double_jump_ready == JumpStates.DOUBLE_JUMP_PRESSED:
