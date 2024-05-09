@@ -1,8 +1,6 @@
 import pygame
-
 import player_settings
 import settings
-from pygame.locals import *
 from enum import Enum
 from bullet import Bullet
 
