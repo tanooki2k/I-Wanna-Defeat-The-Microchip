@@ -9,8 +9,8 @@ class Sprite:
             raise IndexError(f"You need 4 values for (x1, y1, x2, y2), but you put {len(sprite)}")
 
         self.sprite = [player_settings.scale * n for n in sprite]
-        self.width = sprite[2] - sprite[0]
-        self.height = sprite[3] - sprite[1]
+        self.width = sprite[2]
+        self.height = sprite[3]
 
     def __call__(self):
         return self.sprite

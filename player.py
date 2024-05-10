@@ -30,7 +30,7 @@ class Player:
         self.image = pygame.image.load('image/player.png')
         self.sprite_sheet = pygame.transform.scale(self.image, (
             self.image.get_width() * player_settings.scale, self.image.get_height() * player_settings.scale))
-        self.sprite = player_settings.IDLE1
+        self.sprite = player_settings.IDLE4
 
         self.width, self.height = 50, 50
         self.x, self.y = x, y
