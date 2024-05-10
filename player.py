@@ -28,7 +28,9 @@ class Dash(Enum):
 class Player:
     def __init__(self, x, y):
         self.image = pygame.image.load('image/player.png')
-        self.sprite = player_settings.IDLE
+        self.sprite_sheet = pygame.transform.scale(self.image, (
+            self.image.get_width() * player_settings.scale, self.image.get_height() * player_settings.scale))
+        self.sprite = player_settings.IDLE1
 
         self.width, self.height = 50, 50
         self.x, self.y = x, y
@@ -157,7 +159,7 @@ class Player:
             if self.y >= self.initial_y:
                 self.is_jump, self.is_double_jump = False, False
                 self.y, self.double_jump_ready = self.initial_y, 0
-        screen.blit(self.image, [self.x, self.y], self.sprite())
+        screen.blit(self.sprite_sheet, [self.x, self.y], self.sprite())
 
     def height_of_jump(self):
         reduce_jump = 1

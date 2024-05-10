@@ -16,5 +16,5 @@ dash = K_d
 
 
 # Player Sprites
-resize = 10
-IDLE = Sprite((3, 3, 25, 24))
+scale = 2
+IDLE1 = Sprite([3, 3, 25, 24])

@@ -5,7 +5,7 @@ from text import Font
 
 class Gameplay:
     def __init__(self, screen):
-        self.player = Player(200, 550)
+        self.player = Player(200, 558)
 
         self.pause = Font('Pause', 'CampanaScript.otf', int(screen.get_height() * (100 / 700)), (255, 255, 255), [0, 0])
         self.pause.position = [

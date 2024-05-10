@@ -6,7 +6,7 @@ speed = 18
 class Bullet:
     def __init__(self, x, y, direction):
         self.x, self.y = x, y
-        self.radius = 10
+        self.radius = 5
         self.direction = direction
 
     def width(self):
