@@ -157,7 +157,7 @@ class Player:
             if self.y >= self.initial_y:
                 self.is_jump, self.is_double_jump = False, False
                 self.y, self.double_jump_ready = self.initial_y, 0
-        screen.blit(self.image, [self.x, self.y], self.sprite)
+        screen.blit(self.image, [self.x, self.y], self.sprite())
 
     def height_of_jump(self):
         reduce_jump = 1
