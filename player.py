@@ -30,9 +30,9 @@ class Player:
         self.image = pygame.image.load('image/player.png')
         self.sprite_sheet = pygame.transform.scale(self.image, (
             self.image.get_width() * player_settings.scale, self.image.get_height() * player_settings.scale))
-        self.sprite = player_settings.IDLE4
+        self.index = 0
+        self.sprite = player_settings.IDLE1
 
-        self.width, self.height = 50, 50
         self.x, self.y = x, y
         self.initial_y = y
         self.jump_speed = 0
@@ -50,10 +50,10 @@ class Player:
         self.dash_time = 0
 
     def width(self):
-        return self.width
+        return self.sprite.width
 
     def height(self):
-        return self.height
+        return self.sprite.height
 
     def update(self):
         keys = pygame.key.get_pressed()
@@ -98,11 +98,36 @@ class Player:
             self.dash_time += 1
             if self.y == self.initial_y:
                 self.dash = Dash.WAITING
-            if (self.dash == Dash.WAITING) and (self.dash_time >= player_settings.dash_wait_timer) and not keys[
-                player_settings.dash]:
-                self.dash = Dash.NO_DASH
+            if (self.dash == Dash.WAITING) and (self.dash_time >= player_settings.dash_wait_timer):
+                if not keys[player_settings.dash]:
+                    self.dash = Dash.NO_DASH
 
         self.check_not_out_screen()
+        self.y_motion()
+
+    def draw(self, screen):
+        # Draw the bullets
+        self.destroyed_bullets = []
+        for bullet in self.bullets:
+            bullet.draw(screen)
+            if bullet.destroyed(screen):
+                self.destroyed_bullets.append(bullet)
+
+        for bullet_destroyed in self.destroyed_bullets:
+            self.bullets.remove(bullet_destroyed)
+
+        # Draw the player
+        screen.blit(self.sprite_sheet, [self.x, self.y], self.sprite())
+
+    def y_motion(self):
+        if self.is_jump:
+            if self.dash != Dash.NO_MOVE:
+                reduce_jump = self.height_of_jump()
+                self.y -= self.jump_speed * reduce_jump
+                self.jump_speed -= settings.gravity
+            if self.y >= self.initial_y:
+                self.is_jump, self.is_double_jump = False, False
+                self.y, self.double_jump_ready = self.initial_y, 0
 
     def check_not_out_screen(self):
         if not self.x < settings.screen_width - self.width / 2:
@@ -138,28 +163,6 @@ class Player:
                 self.double_jump_ready = JumpStates.JUMP_RELEASED
             if self.double_jump_ready == JumpStates.DOUBLE_JUMP_PRESSED:
                 self.double_jump_ready = JumpStates.DOUBLE_JUMP_RELEASED
-
-    def draw(self, screen):
-        # Draw the bullets
-        self.destroyed_bullets = []
-        for bullet in self.bullets:
-            bullet.draw(screen)
-            if bullet.destroyed(screen):
-                self.destroyed_bullets.append(bullet)
-
-        for bullet_destroyed in self.destroyed_bullets:
-            self.bullets.remove(bullet_destroyed)
-
-        # Draw the player
-        if self.is_jump:
-            if self.dash != Dash.NO_MOVE:
-                reduce_jump = self.height_of_jump()
-                self.y -= self.jump_speed * reduce_jump
-                self.jump_speed -= settings.gravity
-            if self.y >= self.initial_y:
-                self.is_jump, self.is_double_jump = False, False
-                self.y, self.double_jump_ready = self.initial_y, 0
-        screen.blit(self.sprite_sheet, [self.x, self.y], self.sprite())
 
     def height_of_jump(self):
         reduce_jump = 1
