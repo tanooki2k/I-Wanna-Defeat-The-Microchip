@@ -3,6 +3,7 @@ import player_settings
 import settings
 from enum import Enum
 from bullet import Bullet
+from player_animation import PlayerAnimation
 
 
 class JumpStates(Enum):
@@ -25,13 +26,9 @@ class Dash(Enum):
     NO_MOVE = 3
 
 
-class Player:
+class Player(PlayerAnimation):
     def __init__(self, x, y):
-        self.image = pygame.image.load('image/player.png')
-        self.sprite_sheet = pygame.transform.scale(self.image, (
-            self.image.get_width() * player_settings.scale, self.image.get_height() * player_settings.scale))
-        self.index = 0
-        self.sprite = player_settings.IDLE1
+        super().__init__()
 
         self.x, self.y = x, y
         self.initial_y = y
@@ -59,9 +56,9 @@ class Player:
         keys = pygame.key.get_pressed()
         if self.dash != Dash.NO_MOVE:
             if keys[player_settings.right] or keys[player_settings.left]:
-                if keys[player_settings.right] and (self.x < settings.screen_width - self.width / 2):
+                if keys[player_settings.right] and (self.x < settings.screen_width - self.sprite.width / 2):
                     self.direction = 1
-                if keys[player_settings.left] and (self.x > -self.width / 2):
+                if keys[player_settings.left] and (self.x > -self.sprite.width / 2):
                     self.direction = -1
                 self.x += player_settings.player_speed * self.direction
 
@@ -130,10 +127,10 @@ class Player:
                 self.y, self.double_jump_ready = self.initial_y, 0
 
     def check_not_out_screen(self):
-        if not self.x < settings.screen_width - self.width / 2:
-            self.x = settings.screen_width - self.width / 2
-        if not self.x > -self.width / 2:
-            self.x = -self.width / 2
+        if not self.x < settings.screen_width - self.sprite.width / 2:
+            self.x = settings.screen_width - self.sprite.width / 2
+        if not self.x > -self.sprite.width / 2:
+            self.x = -self.sprite.width / 2
 
     def process_shoot_ready(self, keys):
         if not keys[player_settings.shoot]:
@@ -141,8 +138,8 @@ class Player:
                 self.shoot = Shoot.NO_SHOOT
 
     def create_a_bullet(self):
-        initial_x = self.x if self.direction == -1 else self.x + self.width
-        self.bullets.append(Bullet(initial_x, self.y + self.height / 2, self.direction))
+        initial_x = self.x if self.direction == -1 else self.x + self.sprite.width
+        self.bullets.append(Bullet(initial_x, self.y + self.sprite.height / 2, self.direction))
 
     def can_double_jump(self):
         return not self.is_double_jump and self.double_jump_ready == JumpStates.JUMP_RELEASED
