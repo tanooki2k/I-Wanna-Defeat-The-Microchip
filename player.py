@@ -1,6 +1,7 @@
+import pygame
 import settings
 from bullet import Bullet
-from player_animation import *
+from player_animation import AnimationStates, PlayerAnimation, Enum
 
 
 class JumpStates(Enum):
