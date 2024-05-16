@@ -9,15 +9,17 @@ class Bullet:
         self.radius = 5
         self.direction = direction
 
+    def update(self):
+        self.x += speed * self.direction
+
+    def draw(self, screen):
+        pygame.draw.circle(screen, (0, 0, 0), [self.x, self.y], self.radius)
+
     def width(self):
         return self.radius * 2
 
     def height(self):
         return self.radius * 2
-
-    def draw(self, screen):
-        pygame.draw.circle(screen, (0, 0, 0), [self.x, self.y], self.radius)
-        self.x += speed * self.direction
 
     def destroyed(self, screen):
         if (self.x <= -self.width()) or (self.x >= screen.get_width()):

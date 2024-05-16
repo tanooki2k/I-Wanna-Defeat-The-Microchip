@@ -1,7 +1,6 @@
-import pygame
 import settings
 from bullet import Bullet
-from player_animation import AnimationStates, PlayerAnimation, Enum
+from player_animation import *
 
 
 class JumpStates(Enum):
@@ -50,6 +49,11 @@ class Player(PlayerAnimation):
         return self.sprite.height
 
     def update(self):
+        # Update the bullets
+        for bullet in self.bullets:
+            bullet.update()
+
+        # Update Player
         keys = pygame.key.get_pressed()
         if self.dash != Dash.NO_MOVE:
             if keys[player_settings.right] or keys[player_settings.left]:
@@ -143,7 +147,7 @@ class Player(PlayerAnimation):
 
     def create_a_bullet(self):
         initial_x = self.x if self.direction == -1 else self.x + self.sprite.width
-        self.bullets.append(Bullet(initial_x, self.y + self.sprite.height / 2, self.direction))
+        self.bullets.append(Bullet(self.width() / 2 + initial_x + self.direction * 12.5, self.y + self.sprite.height / 2 + 9.5, self.direction))
 
     def can_double_jump(self):
         return not self.is_double_jump and self.double_jump_ready == JumpStates.JUMP_RELEASED
