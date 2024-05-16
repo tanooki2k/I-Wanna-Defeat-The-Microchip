@@ -30,5 +30,6 @@ class PlayerAnimation:
             if self.counter == player_settings.IDLE_FPS:
                 self.counter = 0
                 self.index += 1
+                
                 if self.index == player_settings.IDLE_LEN:
                     self.index = 0
