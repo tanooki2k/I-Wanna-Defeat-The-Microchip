@@ -18,9 +18,19 @@ dash = K_d
 # Player Sprites
 scale = 2
 
-IDLE1 = Sprite([1, 3, 24, 21], 348, 6)
-IDLE2 = Sprite([28, 3, 24, 21], 348, 5)
-IDLE3 = Sprite([56, 3, 24, 21], 348, 5)
-IDLE4 = Sprite([83, 3, 24, 21], 348, 6)
+IDLE_FPS = 5
+IDLE1 = Sprite([0, 3, 25, 21], 348, IDLE_FPS+1)
+IDLE2 = Sprite([27, 3, 25, 21], 348, IDLE_FPS)
+IDLE3 = Sprite([55, 3, 25, 21], 348, IDLE_FPS)
+IDLE4 = Sprite([82, 3, 25, 21], 348, IDLE_FPS+1)
 IDLE = [IDLE1, IDLE2, IDLE3, IDLE4]
 IDLE_LEN = len(IDLE)
+
+WALK_FPS = 5
+WALK1 = Sprite([1, 29, 25, 21], 348, WALK_FPS)
+WALK2 = Sprite([31, 29, 25, 21], 348, WALK_FPS)
+WALK3 = Sprite([59, 29, 25, 21], 348, WALK_FPS-1)
+WALK4 = Sprite([87, 29, 25, 21], 348, WALK_FPS)
+WALK5 = Sprite([118, 29, 25, 21], 348, WALK_FPS-1)
+WALK = [WALK1, WALK2, WALK3, WALK4, WALK5]
+WALK_LEN = len(WALK)
