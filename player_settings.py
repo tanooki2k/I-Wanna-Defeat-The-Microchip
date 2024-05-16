@@ -35,8 +35,8 @@ WALK5 = Sprite([118, 29, 25, 21], 348, WALK_FPS-1)
 WALK = [WALK1, WALK2, WALK3, WALK4, WALK5]
 WALK_LEN = len(WALK)
 
-JUMP1 = Sprite([6, 70, 17, 23], 348)
-JUMP2 = Sprite([29, 70, 18, 23], 348)
+JUMP1 = Sprite([2, 70, 25, 23], 348)
+JUMP2 = Sprite([31, 70, 25, 23], 348)
 JUMP = [JUMP1, JUMP2]
 JUMP_LEN = len(JUMP)
 
