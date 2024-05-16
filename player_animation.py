@@ -1,5 +1,13 @@
 import pygame
 import player_settings
+from enum import Enum
+
+
+class AnimationStates(Enum):
+    IDLE = 0
+    WALK = 1
+    JUMP = 2
+    FALL = 3
 
 
 class PlayerAnimation:
@@ -8,4 +16,19 @@ class PlayerAnimation:
         self.sprite_sheet = pygame.transform.scale(self.image, (
             self.image.get_width() * player_settings.scale, self.image.get_height() * player_settings.scale))
         self.index = 0
-        self.sprite = player_settings.IDLE1
+        self.counter = 0
+        self.animation = AnimationStates.IDLE
+        self.sprite = player_settings.IDLE[0]
+
+    def update(self):
+        if self.animation == AnimationStates.IDLE:
+            self.sprite = player_settings.IDLE[self.index]
+            self.counter += 1
+            if self.counter == player_settings.IDLE_FPS:
+                self.counter = 0
+                self.index += 1
+                if self.index == player_settings.IDLE_LEN:
+                    self.index = 0
+
+    def draw(self, screen, pos):
+        screen.blit(self.sprite_sheet, pos, self.sprite())

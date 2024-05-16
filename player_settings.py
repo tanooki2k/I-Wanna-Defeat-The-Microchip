@@ -23,4 +23,5 @@ IDLE2 = Sprite([29, 3, 23, 21])
 IDLE3 = Sprite([56, 3, 24, 21])
 IDLE4 = Sprite([84, 3, 23, 21])
 IDLE = [IDLE1, IDLE2, IDLE3, IDLE4]
+IDLE_LEN = len(IDLE)
 IDLE_FPS = 5

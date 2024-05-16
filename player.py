@@ -101,6 +101,7 @@ class Player(PlayerAnimation):
 
         self.check_not_out_screen()
         self.y_motion()
+        super().update()
 
     def draw(self, screen):
         # Draw the bullets
@@ -114,7 +115,7 @@ class Player(PlayerAnimation):
             self.bullets.remove(bullet_destroyed)
 
         # Draw the player
-        screen.blit(self.sprite_sheet, [self.x, self.y], self.sprite())
+        super().draw(screen, [self.x, self.y])
 
     def y_motion(self):
         if self.is_jump:
