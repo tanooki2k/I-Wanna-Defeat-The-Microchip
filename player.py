@@ -36,7 +36,6 @@ class Player(PlayerAnimation):
         self.is_jump = False
         self.is_double_jump = False
         self.double_jump_ready = JumpStates.NO_JUMP
-        self.direction = 1
 
         self.bullets = []
         self.shoot = Shoot.NO_SHOOT
@@ -115,7 +114,10 @@ class Player(PlayerAnimation):
             self.bullets.remove(bullet_destroyed)
 
         # Draw the player
-        super().draw(screen, [self.x, self.y])
+        if self.direction == 1:
+            screen.blit(self.sprite_sheet, [self.x, self.y], self.sprite())
+        elif self.direction == -1:
+            screen.blit(self.sprite_sheet_rev, [self.x, self.y], self.sprite(-1))
 
     def y_motion(self):
         if self.is_jump:
