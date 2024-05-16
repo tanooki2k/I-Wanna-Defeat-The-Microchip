@@ -6,8 +6,10 @@ from enum import Enum
 class AnimationStates(Enum):
     IDLE = 0
     WALK = 1
-    JUMP = 2
-    FALL = 3
+    JUMP1 = 2
+    JUMP2 = 3
+    FALL1 = 4
+    FALL2 = 5
 
 
 class PlayerAnimation:
@@ -33,8 +35,22 @@ class PlayerAnimation:
 
         self.idle_animation()
         self.walk_animation()
+        self.jump_animation()
+        self.fall_animation()
 
         self.prev_animation = self.animation
+
+    def fall_animation(self):
+        if self.animation == AnimationStates.FALL1:
+            self.sprite = player_settings.FALL1
+        if self.animation == AnimationStates.FALL2:
+            self.sprite = player_settings.FALL2
+
+    def jump_animation(self):
+        if self.animation == AnimationStates.JUMP1:
+            self.sprite = player_settings.JUMP1
+        if self.animation == AnimationStates.JUMP2:
+            self.sprite = player_settings.JUMP2
 
     def idle_animation(self):
         if self.animation == AnimationStates.IDLE:

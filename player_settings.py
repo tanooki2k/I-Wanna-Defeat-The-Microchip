@@ -37,12 +37,6 @@ WALK_LEN = len(WALK)
 
 JUMP1 = Sprite([2, 70, 25, 23], 348)
 JUMP2 = Sprite([31, 70, 25, 23], 348)
-JUMP = [JUMP1, JUMP2]
-JUMP_LEN = len(JUMP)
 
 FALL1 = Sprite([4, 102, 25, 21], 348)
 FALL2 = Sprite([31, 102, 25, 21], 348)
-FALL = [FALL1, FALL2]
-FALL_LEN = len(FALL)
-
-

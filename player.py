@@ -29,7 +29,8 @@ class Player(PlayerAnimation):
 
         self.x, self.y = x, y
         self.initial_y = y
-        self.jump_speed = 0
+        self.jump_speed = 14
+        self.initial_jump = 14
         self.is_jump = False
         self.is_double_jump = False
         self.double_jump_ready = JumpStates.NO_JUMP
@@ -42,8 +43,8 @@ class Player(PlayerAnimation):
         self.speed_dash = player_settings.initial_speed_dash
         self.dash_time = 0
 
-        self.out_right = -24
-        self.out_left = -22
+        self.out_right = -12 * player_settings.scale
+        self.out_left = -11 * player_settings.scale
 
     def width(self):
         return self.sprite.width
@@ -68,6 +69,16 @@ class Player(PlayerAnimation):
                 self.animation = AnimationStates.WALK
             elif self.y == self.initial_y:
                 self.animation = AnimationStates.IDLE
+
+            if self.y != self.initial_y:
+                if 7 <= self.jump_speed < 14:
+                    self.animation = AnimationStates.JUMP1
+                elif 0 < self.jump_speed < 7:
+                    self.animation = AnimationStates.JUMP2
+                elif (self.jump_speed <= 0) and (self.initial_y - self.y) > 40:
+                    self.animation = AnimationStates.FALL1
+                else:
+                    self.animation = AnimationStates.FALL2
 
             if keys[player_settings.jump]:
                 if not self.is_jump:
@@ -151,7 +162,9 @@ class Player(PlayerAnimation):
 
     def create_a_bullet(self):
         initial_x = self.x if self.direction == -1 else self.x + self.sprite.width
-        self.bullets.append(Bullet(self.width() / 2 + initial_x + self.direction * 12.5, self.y + self.sprite.height / 2 + 9.5, self.direction))
+        self.bullets.append(
+            Bullet(self.width() / 2 + initial_x + self.direction * 12.5, self.y + self.sprite.height / 2 + 9.5,
+                   self.direction))
 
     def can_double_jump(self):
         return not self.is_double_jump and self.double_jump_ready == JumpStates.JUMP_RELEASED
