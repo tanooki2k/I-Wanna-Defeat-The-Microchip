@@ -1,9 +1,6 @@
-import pygame
-import player_settings
 import settings
-from enum import Enum
 from bullet import Bullet
-from player_animation import PlayerAnimation
+from player_animation import *
 
 
 class JumpStates(Enum):
@@ -60,6 +57,9 @@ class Player(PlayerAnimation):
                 if keys[player_settings.left] and (self.x > -self.sprite.width / 2):
                     self.direction = -1
                 self.x += player_settings.player_speed * self.direction
+                self.animation = AnimationStates.WALK
+            elif self.y == self.initial_y:
+                self.animation = AnimationStates.IDLE
 
             if keys[player_settings.jump]:
                 if not self.is_jump:

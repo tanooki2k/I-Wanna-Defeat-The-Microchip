@@ -29,6 +29,7 @@ class PlayerAnimation:
     def update(self):
         if self.prev_animation != self.animation:
             self.index = 0
+            self.counter = 0
 
         self.idle_animation()
         self.walk_animation()

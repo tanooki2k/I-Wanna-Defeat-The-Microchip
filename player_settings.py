@@ -28,7 +28,7 @@ IDLE_LEN = len(IDLE)
 
 WALK_FPS = 5
 WALK1 = Sprite([1, 29, 25, 21], 348, WALK_FPS)
-WALK2 = Sprite([31, 29, 25, 21], 348, WALK_FPS)
+WALK2 = Sprite([31, 29, 25, 21], 348, WALK_FPS-1)
 WALK3 = Sprite([59, 29, 25, 21], 348, WALK_FPS-1)
 WALK4 = Sprite([87, 29, 25, 21], 348, WALK_FPS)
 WALK5 = Sprite([118, 29, 25, 21], 348, WALK_FPS-1)
