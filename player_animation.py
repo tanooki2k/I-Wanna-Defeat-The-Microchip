@@ -27,7 +27,7 @@ class PlayerAnimation:
         if self.animation == AnimationStates.IDLE:
             self.sprite = player_settings.IDLE[self.index]
             self.counter += 1
-            if self.counter == player_settings.IDLE_FPS:
+            if self.counter == player_settings.IDLE[self.index].FPS:
                 self.counter = 0
                 self.index += 1
                 

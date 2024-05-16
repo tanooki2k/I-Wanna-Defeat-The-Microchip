@@ -18,10 +18,9 @@ dash = K_d
 # Player Sprites
 scale = 2
 
-IDLE1 = Sprite([1, 3, 24, 21], 348)
-IDLE2 = Sprite([28, 3, 24, 21], 348)
-IDLE3 = Sprite([56, 3, 24, 21], 348)
-IDLE4 = Sprite([83, 3, 24, 21], 348)
+IDLE1 = Sprite([1, 3, 24, 21], 348, 6)
+IDLE2 = Sprite([28, 3, 24, 21], 348, 5)
+IDLE3 = Sprite([56, 3, 24, 21], 348, 5)
+IDLE4 = Sprite([83, 3, 24, 21], 348, 6)
 IDLE = [IDLE1, IDLE2, IDLE3, IDLE4]
 IDLE_LEN = len(IDLE)
-IDLE_FPS = 6
