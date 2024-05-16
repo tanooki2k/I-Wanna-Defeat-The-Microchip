@@ -42,6 +42,9 @@ class Player(PlayerAnimation):
         self.speed_dash = player_settings.initial_speed_dash
         self.dash_time = 0
 
+        self.out_right = -24
+        self.out_left = -22
+
     def width(self):
         return self.sprite.width
 
@@ -57,9 +60,9 @@ class Player(PlayerAnimation):
         keys = pygame.key.get_pressed()
         if self.dash != Dash.NO_MOVE:
             if keys[player_settings.right] or keys[player_settings.left]:
-                if keys[player_settings.right] and (self.x < settings.screen_width - self.sprite.width / 2):
+                if keys[player_settings.right] and (self.x < settings.screen_width + self.out_right):
                     self.direction = 1
-                if keys[player_settings.left] and (self.x > -self.sprite.width / 2):
+                if keys[player_settings.left] and (self.x > self.out_left):
                     self.direction = -1
                 self.x += player_settings.player_speed * self.direction
                 self.animation = AnimationStates.WALK
@@ -135,10 +138,11 @@ class Player(PlayerAnimation):
                 self.y, self.double_jump_ready = self.initial_y, 0
 
     def check_not_out_screen(self):
-        if not self.x < settings.screen_width - self.sprite.width / 2:
-            self.x = settings.screen_width - self.sprite.width / 2
-        if not self.x > -self.sprite.width / 2:
-            self.x = -self.sprite.width / 2
+        if not self.x < settings.screen_width + self.out_right:
+            self.x = (settings.screen_width +
+                      self.out_right)
+        if not self.x > self.out_left:
+            self.x = self.out_left
 
     def process_shoot_ready(self, keys):
         if not keys[player_settings.shoot]:
