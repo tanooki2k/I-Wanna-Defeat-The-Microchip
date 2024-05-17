@@ -1,10 +1,6 @@
-import pygame
-
-import player_settings
 import settings
-from pygame.locals import *
-from enum import Enum
 from bullet import Bullet
+from player_animation import *
 
 
 class JumpStates(Enum):
@@ -27,16 +23,17 @@ class Dash(Enum):
     NO_MOVE = 3
 
 
-class Player:
+class Player(PlayerAnimation):
     def __init__(self, x, y):
-        self.width, self.height = 50, 50
+        super().__init__()
+
         self.x, self.y = x, y
         self.initial_y = y
-        self.jump_speed = 0
+        self.jump_speed = 14
+        self.initial_jump = 14
         self.is_jump = False
         self.is_double_jump = False
         self.double_jump_ready = JumpStates.NO_JUMP
-        self.direction = 1
 
         self.bullets = []
         self.shoot = Shoot.NO_SHOOT
@@ -46,36 +43,53 @@ class Player:
         self.speed_dash = player_settings.initial_speed_dash
         self.dash_time = 0
 
+        self.out_right = -12 * player_settings.scale
+        self.out_left = -11 * player_settings.scale
+
     def width(self):
-        return self.width
+        return self.sprite.width
 
     def height(self):
-        return self.height
+        return self.sprite.height
 
     def update(self):
+        # Update the bullets
+        for bullet in self.bullets:
+            bullet.update()
+
+        # Update Player
         keys = pygame.key.get_pressed()
         if self.dash != Dash.NO_MOVE:
-            if keys[K_RIGHT] or keys[K_LEFT]:
-                if keys[K_RIGHT] and (self.x < settings.screen_width - self.width / 2):
+            if keys[player_settings.right] or keys[player_settings.left]:
+                if keys[player_settings.right] and (self.x < settings.screen_width + self.out_right):
                     self.direction = 1
-                if keys[K_LEFT] and (self.x > -self.width / 2):
+                if keys[player_settings.left] and (self.x > self.out_left):
                     self.direction = -1
                 self.x += player_settings.player_speed * self.direction
+                self.animation = AnimationStates.WALK
+            elif self.y == self.initial_y:
+                self.animation = AnimationStates.IDLE
 
-            if keys[K_UP]:
+            if self.y != self.initial_y:
+                if 7 <= self.jump_speed < 14:
+                    self.animation = AnimationStates.JUMP1
+                elif 0 <= self.jump_speed < 7:
+                    self.animation = AnimationStates.JUMP2
+                elif (self.jump_speed < 0) and (self.initial_y - self.y) > 40:
+                    self.animation = AnimationStates.FALL1
+                else:
+                    self.animation = AnimationStates.FALL2
+
+            if keys[player_settings.jump]:
                 if not self.is_jump:
                     self.do_jump()
                 elif self.can_double_jump():
                     self.do_double_jump()
             self.process_jump_ready(keys)
 
-            if keys[K_s] and (self.shoot == Shoot.NO_SHOOT):
-                self.create_a_bullet()
-                self.shoot = Shoot.SHOT
-            self.process_shoot_ready(keys)
-
-            if keys[K_d] and (self.dash == Dash.NO_DASH):
+            if keys[player_settings.dash] and (self.dash == Dash.NO_DASH):
                 self.dash = Dash.NO_MOVE
+                self.animation = AnimationStates.WALK
                 self.jump_speed = 0
                 self.speed_dash = player_settings.initial_speed_dash
                 self.dash_time = 0
@@ -91,29 +105,67 @@ class Player:
                     self.dash = Dash.IN_AIR
                 self.dash_time = 0
 
+        if keys[player_settings.shoot] and (self.shoot == Shoot.NO_SHOOT):
+            self.create_a_bullet()
+            self.shoot = Shoot.SHOT
+        self.process_shoot_ready(keys)
+
         if (self.dash == Dash.WAITING) or (self.dash == Dash.IN_AIR):
             self.dash_time += 1
             if self.y == self.initial_y:
                 self.dash = Dash.WAITING
-            if (self.dash == Dash.WAITING) and (self.dash_time >= player_settings.dash_wait_timer) and not keys[K_d]:
-                self.dash = Dash.NO_DASH
+            if (self.dash == Dash.WAITING) and (self.dash_time >= player_settings.dash_wait_timer):
+                if not keys[player_settings.dash]:
+                    self.dash = Dash.NO_DASH
 
         self.check_not_out_screen()
+        self.y_motion()
+        super().update()
+
+    def draw(self, screen):
+        # Draw the bullets
+        self.destroyed_bullets = []
+        for bullet in self.bullets:
+            bullet.draw(screen)
+            if bullet.destroyed(screen):
+                self.destroyed_bullets.append(bullet)
+
+        for bullet_destroyed in self.destroyed_bullets:
+            self.bullets.remove(bullet_destroyed)
+
+        # Draw the player
+        if self.direction == 1:
+            screen.blit(self.sprite_sheet, [self.x, self.y], self.sprite())
+        elif self.direction == -1:
+            screen.blit(self.sprite_sheet_rev, [self.x, self.y], self.sprite(-1))
+
+    def y_motion(self):
+        if self.is_jump:
+            if self.dash != Dash.NO_MOVE:
+                reduce_jump = self.height_of_jump()
+                self.y -= self.jump_speed * reduce_jump
+                self.jump_speed -= settings.gravity
+            if self.y >= self.initial_y:
+                self.is_jump, self.is_double_jump = False, False
+                self.y, self.double_jump_ready = self.initial_y, 0
 
     def check_not_out_screen(self):
-        if not self.x < settings.screen_width - self.width / 2:
-            self.x = settings.screen_width - self.width / 2
-        if not self.x > -self.width / 2:
-            self.x = -self.width / 2
+        if not self.x < settings.screen_width + self.out_right:
+            self.x = (settings.screen_width +
+                      self.out_right)
+        if not self.x > self.out_left:
+            self.x = self.out_left
 
     def process_shoot_ready(self, keys):
-        if not keys[K_s]:
+        if not keys[player_settings.shoot]:
             if self.shoot == Shoot.SHOT:
                 self.shoot = Shoot.NO_SHOOT
 
     def create_a_bullet(self):
-        initial_x = self.x if self.direction == -1 else self.x + self.width
-        self.bullets.append(Bullet(initial_x, self.y + self.height / 2, self.direction))
+        initial_x = self.x if self.direction == -1 else self.x + self.sprite.width
+        self.bullets.append(
+            Bullet(self.width() / 2 + initial_x + self.direction * 12.5, self.y + self.sprite.height / 2 + 9.5,
+                   self.direction))
 
     def can_double_jump(self):
         return not self.is_double_jump and self.double_jump_ready == JumpStates.JUMP_RELEASED
@@ -129,33 +181,11 @@ class Player:
         self.double_jump_ready = JumpStates.DOUBLE_JUMP_PRESSED
 
     def process_jump_ready(self, keys):
-        if not keys[K_UP]:
+        if not keys[player_settings.jump]:
             if self.double_jump_ready == JumpStates.JUMP_PRESSED:
                 self.double_jump_ready = JumpStates.JUMP_RELEASED
             if self.double_jump_ready == JumpStates.DOUBLE_JUMP_PRESSED:
                 self.double_jump_ready = JumpStates.DOUBLE_JUMP_RELEASED
-
-    def draw(self, screen):
-        # Draw the bullets
-        self.destroyed_bullets = []
-        for bullet in self.bullets:
-            bullet.draw(screen)
-            if bullet.destroyed(screen):
-                self.destroyed_bullets.append(bullet)
-
-        for bullet_destroyed in self.destroyed_bullets:
-            self.bullets.remove(bullet_destroyed)
-
-        # Draw the player
-        if self.is_jump:
-            if self.dash != Dash.NO_MOVE:
-                reduce_jump = self.height_of_jump()
-                self.y -= self.jump_speed * reduce_jump
-                self.jump_speed -= settings.gravity
-            if self.y >= self.initial_y:
-                self.is_jump, self.is_double_jump = False, False
-                self.y, self.double_jump_ready = self.initial_y, 0
-        pygame.draw.rect(screen, (255, 0, 0), [self.x, self.y, self.width, self.height])
 
     def height_of_jump(self):
         reduce_jump = 1
