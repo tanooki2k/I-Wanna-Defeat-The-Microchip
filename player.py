@@ -73,9 +73,9 @@ class Player(PlayerAnimation):
             if self.y != self.initial_y:
                 if 7 <= self.jump_speed < 14:
                     self.animation = AnimationStates.JUMP1
-                elif 0 < self.jump_speed < 7:
+                elif 0 <= self.jump_speed < 7:
                     self.animation = AnimationStates.JUMP2
-                elif (self.jump_speed <= 0) and (self.initial_y - self.y) > 40:
+                elif (self.jump_speed < 0) and (self.initial_y - self.y) > 40:
                     self.animation = AnimationStates.FALL1
                 else:
                     self.animation = AnimationStates.FALL2
@@ -89,6 +89,7 @@ class Player(PlayerAnimation):
 
             if keys[player_settings.dash] and (self.dash == Dash.NO_DASH):
                 self.dash = Dash.NO_MOVE
+                self.animation = AnimationStates.WALK
                 self.jump_speed = 0
                 self.speed_dash = player_settings.initial_speed_dash
                 self.dash_time = 0
