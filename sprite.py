@@ -1,8 +1,5 @@
-import player_settings
-
-
 class Sprite:
-    def __init__(self, sprite, sprite_sheet_size, fps=0):
+    def __init__(self, sprite, sprite_sheet_size, fps=0, scale=1):
         if not isinstance(sprite, list):
             raise TypeError(f'You tried to use "{sprite.__class__.__name__}" when list is required')
         elif len(sprite) != 4:
@@ -13,8 +10,9 @@ class Sprite:
         elif fps < 0:
             raise ValueError(f'You have a negative value on FPS, value sent: {fps}')
 
-        self.sprite = [player_settings.scale * n for n in sprite]
-        self.sprite_rev = [sprite_sheet_size * player_settings.scale - self.sprite[2] - self.sprite[0], self.sprite[1], self.sprite[2],
+        self.sprite = [scale * n for n in sprite]
+        self.sprite_rev = [sprite_sheet_size * scale - self.sprite[2] - self.sprite[0], self.sprite[1],
+                           self.sprite[2],
                            self.sprite[3]]
         self.width = sprite[2]
         self.height = sprite[3]
