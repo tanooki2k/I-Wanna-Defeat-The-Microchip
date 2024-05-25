@@ -10,7 +10,7 @@ class Bullet:
         self.thickness = 100
         self.color = (255, 255, 0)
         self.border_color = (0, 0, 0)
-        self.border_radius = 1.5
+        self.border_radius = 2
         self.direction = direction
 
     def update(self):

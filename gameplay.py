@@ -1,4 +1,4 @@
-import pygame
+import pygame, settings
 from player import Player
 from text import Font
 
@@ -29,7 +29,8 @@ class Gameplay:
 
     def draw(self, screen):
         pygame.draw.rect(screen, (255, 255, 255), [0, 0, screen.get_width(), screen.get_height()])
-        pygame.draw.rect(screen, (0, 255, 0), [0, 600, screen.get_width(), 100])
+        pygame.draw.rect(screen, (0, 0, 0), [0, 600, screen.get_width(), 100])
+        pygame.draw.rect(screen, settings.floor_color, [5, 605, screen.get_width()-10, 100])
         self.player.draw(screen)
         if self.is_pause % 2:
             for text in self.texts:
