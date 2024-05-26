@@ -7,7 +7,7 @@ from background import Background
 class Gameplay:
     def __init__(self, screen):
         # Creating the Background:
-        self.background = Background("background.png", [0, 0])
+        self.background = Background("background.png", [0, 0], settings.screen_width / 537, settings.screen_height / 442)
         self.capsule = Background("capsule.png", [(settings.screen_width - 465) / 2, 0])
 
         # Initializing  the Player:
