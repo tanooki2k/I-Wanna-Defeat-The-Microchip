@@ -7,7 +7,7 @@ class Game:
         self.game_name = name
         self.height, self.width = h, w
         pygame.init()
-        self.screen = pygame.display.set_mode((self.width, self.height))
+        self.screen = pygame.display.set_mode((self.width, self.height), settings.flags, 16)
         pygame.display.set_caption(self.game_name)
         self.currentState = None
 

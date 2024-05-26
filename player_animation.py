@@ -14,7 +14,7 @@ class AnimationStates(Enum):
 
 class PlayerAnimation:
     def __init__(self):
-        self.image = pygame.image.load('image/player.png')
+        self.image = pygame.image.load('image/player.png').convert_alpha()
         self.sprite_sheet = pygame.transform.scale(self.image, (
             self.image.get_width() * player_settings.scale, self.image.get_height() * player_settings.scale))
         self.sprite_sheet_rev = pygame.transform.flip(self.sprite_sheet, True, False)

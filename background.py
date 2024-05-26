@@ -3,7 +3,7 @@ import pygame
 
 class Background:
     def __init__(self, image, position):
-        self.image = pygame.image.load(f'image/{image}')
+        self.image = pygame.image.load(f'image/{image}').convert_alpha()
 
         if not isinstance(position, list):
             raise ValueError(f'You tried to use "{position.__class__.__name__}" when list is required')
