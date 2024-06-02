@@ -1,8 +1,14 @@
-# Importing classes
+#!/usr/bin/env python3
+
 from game import Game
 from title import Title
 from menu import Menu
 from gameplay import Gameplay
+import os
+
+abspath = os.path.abspath(__file__)
+dname = os.path.dirname(abspath)
+os.chdir(dname)
 
 # Initializing classes
 game = Game("I Wanna Defeat The Microchip", 1000, 700)
