@@ -1,5 +1,10 @@
 [Desktop Entry]
 Name=I Wanna Defeat The Microchip
+Version=1.0
 Exec=/home/javier/PycharmProjects/I-Wanna-Defeat-The-Microchip/iwdtm.sh
 Type=Application
 Icon=/home/javier/PycharmProjects/I-Wanna-Defeat-The-Microchip/image/icon.png
+Categories=Game;
+Comment=This is my video game!
+Terminal=false
+StartupNotify=true
